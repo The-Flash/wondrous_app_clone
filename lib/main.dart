@@ -1,12 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:wondrous_app_clone/common_libs.dart';
+import 'package:wondrous_app_clone/logic/app_logic.dart';
+import 'package:wondrous_app_clone/logic/settings_logic.dart';
 import 'package:wondrous_app_clone/ui/app_scaffold.dart';
 
-void main() {
+void main() async {
   WidgetsBinding widgetBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetBinding);
+  registerSingletons();
   runApp(const WondersApp());
+  await appLogic.bootstrap();
   FlutterNativeSplash.remove();
 }
 
@@ -26,5 +29,16 @@ class WondersApp extends StatelessWidget {
     );
   }
 }
+
+void registerSingletons() {
+  // Top level app controller
+  GetIt.I.registerLazySingleton<AppLogic>(() => AppLogic());
+
+  GetIt.I.registerLazySingleton<SettingsLogic>(() => SettingsLogic());
+}
+
+AppLogic get appLogic => GetIt.I.get<AppLogic>();
+
+SettingsLogic get settingsLogic => GetIt.I.get<SettingsLogic>();
 
 AppStyle get $styles => WondersAppScaffold.style;

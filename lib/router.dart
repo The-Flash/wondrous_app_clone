@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wondrous_app_clone/common_libs.dart';
+import 'package:wondrous_app_clone/ui/app_scaffold.dart';
+import 'package:wondrous_app_clone/ui/screens/home/wonders_home_screen.dart';
+import 'package:wondrous_app_clone/ui/screens/intro/intro_screen.dart';
 
 class ScreenPaths {
   static String splash = "/";
@@ -12,13 +15,24 @@ class ScreenPaths {
 
 final appRouter = GoRouter(
   redirect: _handleRedirect,
+  navigatorBuilder: (_, __, child) => WondersAppScaffold(
+    child: child,
+  ),
   routes: [
     AppRoute(
       ScreenPaths.splash,
       (_) => Container(
         color: $styles.colors.greyStrong,
       ),
-    )
+    ),
+    AppRoute(
+      ScreenPaths.home,
+      (_) => const HomeScreen(),
+    ),
+    AppRoute(
+      ScreenPaths.intro,
+      (_) => const IntroScreen(),
+    ),
   ],
 );
 
@@ -51,7 +65,10 @@ class AppRoute extends GoRoute {
             });
 }
 
-String? _handleRedirect(BuildContext context, GoRouterState state) {
+String? _handleRedirect(GoRouterState state) {
+  if (!appLogic.isBootstrapComplete && state.location != ScreenPaths.splash) {
+    return ScreenPaths.splash;
+  }
   debugPrint("Navigate to: ${state.location}");
-  return ScreenPaths.splash;
+  return null;
 }
