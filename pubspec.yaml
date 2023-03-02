@@ -48,6 +48,7 @@ dependencies:
   shared_preferences: ^2.0.18
   get_it: ^7.2.0
   get_it_mixin: ^3.1.4+2
+  flutter_animate: ^4.1.0
 
 dev_dependencies:
   flutter_test:

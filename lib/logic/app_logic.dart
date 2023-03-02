@@ -21,9 +21,9 @@ class AppLogic {
       await FlutterDisplayMode.setHighRefreshRate();
     }
 
-    // TODO: load settings logic
+    await settingsLogic.load();
 
-    // TODO: load locale logic;
+    await localeLogic.load();
 
     // TODO: load wonders data
 
