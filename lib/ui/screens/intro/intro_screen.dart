@@ -1,6 +1,10 @@
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wondrous_app_clone/assets.dart';
 import 'package:wondrous_app_clone/common_libs.dart';
+import 'package:wondrous_app_clone/ui/common/app_icons.dart';
+import 'package:wondrous_app_clone/ui/common/controls/circle_buttons.dart';
+import 'package:wondrous_app_clone/ui/common/gradient_container.dart';
 import 'package:wondrous_app_clone/ui/common/static_text_scale.dart';
 import 'package:wondrous_app_clone/ui/common/themed_text.dart';
 import 'package:wondrous_app_clone/ui/common/utils/app_haptics.dart';
@@ -19,6 +23,7 @@ class _IntroScreenState extends State<IntroScreen> {
   static const double _textHeight = 100;
   static const double _pageIndicatorHeight = 55;
   final ValueNotifier<int> _currentPage = ValueNotifier(0);
+  bool get _isOnLastPage => _currentPage.value.round() == pageData.length - 1;
 
   static List<_PageData> pageData = [];
 
@@ -41,6 +46,13 @@ class _IntroScreenState extends State<IntroScreen> {
     super.dispose();
   }
 
+  void _handleIntroCompletedPressed() {
+    if (_currentPage.value == pageData.length - 1) {
+      context.go(ScreenPaths.home);
+      settingsLogic.hasCompletedOnboarding.value = true;
+    }
+  }
+
   Widget _buildHzGradientOverlay({bool left = false}) {
     return Align(
       alignment: Alignment(left ? -1 : 1, 0),
@@ -50,11 +62,60 @@ class _IntroScreenState extends State<IntroScreen> {
           padding: EdgeInsets.only(left: left ? 0 : 200, right: left ? 200 : 0),
           child: Transform.scale(
             scaleX: left ? -1 : 1,
-            child: SizedBox.shrink(),
+            child: HzGradient([
+              $styles.colors.black.withOpacity(0),
+              $styles.colors.black,
+            ], const [
+              0,
+              .2
+            ]),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildFinishBtn(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: _currentPage,
+      builder: (_, pageIndex, __) {
+        return AnimatedOpacity(
+          opacity: pageIndex == pageData.length - 1 ? 1 : 0,
+          duration: $styles.times.fast,
+          child: CircleIconBtn(
+            icon: AppIcons.next_large,
+            onPressed: _handleIntroCompletedPressed,
+            semanticLabel: $strings.introSemanticEnterApp,
+          ),
+        );
+      },
+    );
+  }
+
+  void _handleNavTextDoubleTapped() {
+    final int current = _pageController.page!.round();
+    if (_isOnLastPage) return;
+    _pageController.animateToPage(current + 1,
+        duration: 250.ms, curve: Curves.easeIn);
+  }
+
+  Widget _buildNavText(BuildContext context) {
+    return ValueListenableBuilder(
+        valueListenable: _currentPage,
+        builder: (_, pageIndex, __) {
+          return AnimatedOpacity(
+            opacity: pageIndex == pageData.length - 1 ? 0 : 1,
+            duration: $styles.times.fast,
+            child: Semantics(
+              onTapHint: $strings.introSemanticNavigate,
+              onTap: _isOnLastPage ? null : _handleNavTextDoubleTapped,
+              child: Text(
+                $strings.introSemanticSwipeLeft,
+                style: $styles.text.bodySmall,
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -136,6 +197,17 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
                 _buildHzGradientOverlay(left: true),
                 _buildHzGradientOverlay(),
+                Positioned(
+                  right: $styles.insets.lg,
+                  bottom: $styles.insets.lg,
+                  child: _buildFinishBtn(context),
+                ),
+                BottomCenter(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: $styles.insets.lg),
+                    child: _buildNavText(context),
+                  ),
+                ),
               ],
             ),
           ),

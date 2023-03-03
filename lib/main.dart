@@ -2,8 +2,6 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wondrous_app_clone/common_libs.dart';
 import 'package:wondrous_app_clone/logic/app_logic.dart';
-import 'package:wondrous_app_clone/logic/locale_logic.dart';
-import 'package:wondrous_app_clone/logic/settings_logic.dart';
 import 'package:wondrous_app_clone/ui/app_scaffold.dart';
 
 void main() async {

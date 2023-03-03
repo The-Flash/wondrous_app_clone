@@ -13,7 +13,12 @@ class SettingsLogic with ThrottledSaveLoadMixin {
     ..addListener(scheduleSave);
 
   @override
-  void copyFromJson(Map<String, dynamic> value) {}
+  void copyFromJson(Map<String, dynamic> value) {
+    hasCompletedOnboarding.value = value['hasCompletedOnboarding'] ?? false;
+    hasDismissedSearchMessage.value =
+        value['hasDismissedSearchMessage'] ?? false;
+    currentLocale.value = value['currentLocale'];
+  }
 
   @override
   Map<String, dynamic> toJson() {
@@ -26,6 +31,6 @@ class SettingsLogic with ThrottledSaveLoadMixin {
 
   Future<void> changeLocale(Locale value) async {
     currentLocale.value = value.languageCode;
-    // TODO: 
+    // TODO:
   }
 }

@@ -27,23 +27,58 @@ class GradientContainer extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Container(
-        width: width,
-        height: height,
-        alignment: alignment,
-        decoration: BoxDecoration(
-          backgroundBlendMode: blendMode,
-          borderRadius: borderRadius,
-          gradient: LinearGradient(
-            begin: begin ?? Alignment.centerLeft,
-            end: end ?? Alignment.centerRight,
-            colors: colors,
-            stops: stops,
+  Widget build(BuildContext context) => IgnorePointer(
+        child: Container(
+          width: width,
+          height: height,
+          alignment: alignment,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: begin ?? Alignment.centerLeft,
+              end: end ?? Alignment.centerRight,
+              colors: colors,
+              stops: stops,
+            ),
+            backgroundBlendMode: blendMode,
+            borderRadius: borderRadius,
           ),
+          child: child,
         ),
-      ),
-    );
-  }
+      );
+}
+
+class HzGradient extends GradientContainer {
+  const HzGradient(
+    List<Color> colors,
+    List<double> stops, {
+    super.key,
+    super.child,
+    super.width,
+    super.height,
+    super.alignment,
+    super.blendMode,
+    super.borderRadius,
+  }) : super(
+          colors: colors,
+          stops: stops,
+        );
+}
+
+class VtGradient extends GradientContainer {
+  const VtGradient(
+    List<Color> colors,
+    List<double> stops, {
+    super.key,
+    super.child,
+    super.width,
+    super.height,
+    super.alignment,
+    super.blendMode,
+    super.borderRadius,
+  }) : super(
+          colors: colors,
+          stops: stops,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
 }
