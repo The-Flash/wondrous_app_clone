@@ -1,6 +1,10 @@
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wondrous_app_clone/assets.dart';
 import 'package:wondrous_app_clone/common_libs.dart';
+import 'package:wondrous_app_clone/ui/common/static_text_scale.dart';
 import 'package:wondrous_app_clone/ui/common/themed_text.dart';
 import 'package:wondrous_app_clone/ui/common/utils/app_haptics.dart';
+import 'package:wondrous_app_clone/ui/common/controls/app_page_indicator.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -37,6 +41,22 @@ class _IntroScreenState extends State<IntroScreen> {
     super.dispose();
   }
 
+  Widget _buildHzGradientOverlay({bool left = false}) {
+    return Align(
+      alignment: Alignment(left ? -1 : 1, 0),
+      child: FractionallySizedBox(
+        widthFactor: .5,
+        child: Padding(
+          padding: EdgeInsets.only(left: left ? 0 : 200, right: left ? 200 : 0),
+          child: Transform.scale(
+            scaleX: left ? -1 : 1,
+            child: SizedBox.shrink(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     pageData = [
@@ -64,11 +84,58 @@ class _IntroScreenState extends State<IntroScreen> {
                     onIncrease: () => _handleSemanticSwipe(1),
                     onDecrease: () => _handleSemanticSwipe(-1),
                     child: PageView(
+                      controller: _pageController,
                       children: pages,
                       onPageChanged: (_) => AppHaptics.lightImpact(),
                     ),
                   ),
-                )
+                ),
+                IgnorePointer(
+                  ignoringSemantics: false,
+                  child: Column(
+                    children: [
+                      const Spacer(),
+                      Semantics(
+                        header: true,
+                        child: Container(
+                          height: _logoHeight,
+                          alignment: Alignment.center,
+                          child: const _WondrousLogo(),
+                        ),
+                      ),
+                      // masked image
+                      SizedBox(
+                        height: _imageSize,
+                        width: _imageSize,
+                        child: ValueListenableBuilder<int>(
+                          valueListenable: _currentPage,
+                          builder: (_, value, __) {
+                            return AnimatedSwitcher(
+                              duration: $styles.times.slow,
+                              child: KeyedSubtree(
+                                key: ValueKey(value),
+                                child: _PageImage(data: pageData[value]),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const Gap(_IntroScreenState._textHeight),
+                      Container(
+                        height: _pageIndicatorHeight,
+                        alignment: const Alignment(0.0, 0),
+                        child: AppPageIndicator(
+                          controller: _pageController,
+                          count: pageData.length,
+                          color: $styles.colors.offWhite,
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                    ],
+                  ),
+                ),
+                _buildHzGradientOverlay(left: true),
+                _buildHzGradientOverlay(),
               ],
             ),
           ),
@@ -100,6 +167,63 @@ class _Page extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: $styles.insets.md),
       ),
+    );
+  }
+}
+
+class _WondrousLogo extends StatelessWidget {
+  const _WondrousLogo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ExcludeSemantics(
+          child: SvgPicture.asset(
+            SvgPaths.compassSimple,
+            color: $styles.colors.offWhite,
+            height: 88,
+          ),
+        ),
+        Gap($styles.insets.xs),
+        StaticTextScale(
+          child: Text(
+            $strings.introSemanticWonderous,
+            style: $styles.text.wonderTitle.copyWith(
+              fontSize: 32 * $styles.scale,
+              color: $styles.colors.offWhite,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PageImage extends StatelessWidget {
+  const _PageImage({Key? key, required this.data}) : super(key: key);
+
+  final _PageData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SizedBox.expand(
+          child: Image.asset(
+            '${ImagePaths.common}/intro-${data.img}.jpg',
+            fit: BoxFit.cover,
+            alignment: Alignment.centerRight,
+          ),
+        ),
+        Positioned.fill(
+          child: Image.asset(
+            '${ImagePaths.common}/intro-mask-${data.mask}.png',
+            fit: BoxFit.fill,
+          ),
+        ),
+      ],
     );
   }
 }
