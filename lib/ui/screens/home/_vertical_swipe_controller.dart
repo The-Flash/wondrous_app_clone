@@ -36,4 +36,11 @@ class _VerticalSwipeController {
       }
     }
   }
+
+  Widget wrapGestureDetector(Widget child, {Key? key}) => GestureDetector(
+        key: key,
+        excludeFromSemantics: true,
+        onTapDown: (_) => handleTapDown(),
+        onTapUp: (_) => handleTapCancelled(),
+      );
 }

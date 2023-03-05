@@ -11,6 +11,7 @@ class ScreenPaths {
   static String intro = "/welcome";
   static String home = "/home";
   static String settings = "/settings";
+  static String wonderDetails(WonderType type, {int tabIndex = 0}) => '/wonder/${type.name}?t=$tabIndex';
 }
 
 final appRouter = GoRouter(

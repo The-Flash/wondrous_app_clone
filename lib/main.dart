@@ -2,6 +2,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wondrous_app_clone/common_libs.dart';
 import 'package:wondrous_app_clone/logic/app_logic.dart';
+import 'package:wondrous_app_clone/logic/wonders_logic.dart';
 import 'package:wondrous_app_clone/ui/app_scaffold.dart';
 
 void main() async {
@@ -37,6 +38,8 @@ void registerSingletons() {
   GetIt.I.registerLazySingleton<SettingsLogic>(() => SettingsLogic());
 
   GetIt.I.registerLazySingleton<LocaleLogic>(() => LocaleLogic());
+
+  GetIt.I.registerLazySingleton<WondersLogic>(() => WondersLogic());
 }
 
 AppLogic get appLogic => GetIt.I.get<AppLogic>();
@@ -45,8 +48,7 @@ SettingsLogic get settingsLogic => GetIt.I.get<SettingsLogic>();
 
 LocaleLogic get localeLogic => GetIt.I.get<LocaleLogic>();
 
-
+WondersLogic get wondersLogic => GetIt.I.get<WondersLogic>();
 
 AppLocalizations get $strings => localeLogic.strings;
 AppStyle get $styles => WondersAppScaffold.style;
-
